@@ -2,15 +2,17 @@
 <html><head><meta charset="utf-8"><title>To-Do</title></head><body>
   <h1>To-Do</h1>
   <form id="todoForm">
-    <label>Item Name: <input id="itemName" name="itemName" required></label><br>
+      <label>Item ID: <input id="itemId" name="itemId"></label><br>\n    <label>Item Name: <input id="itemName" name="itemName" required></label><br>
     <label>Item Description: <textarea id="itemDescription" name="itemDescription"></textarea></label><br>
     <button type="submit">Submit</button>
-  </form>
+    <label>Item Hash: <input id="itemHash" name="itemHash"></label><br>
+</form>
   <script>
   document.getElementById('todoForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const payload = { itemName: document.getElementById('itemName').value, itemDescription: document.getElementById('itemDescription').value };
-    const res = await fetch('/submittodoitem', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+    payload.itemId=document.getElementById('itemId')?document.getElementById('itemId').value:null;payload.itemUuid=document.getElementById('itemUuid')?document.getElementById('itemUuid').value:null;payload.itemHash=document.getElementById('itemHash')&&document.getElementById('itemHash').value?document.getElementById('itemHash').value:btoa(payload.itemName+'|'+payload.itemDescription);
+      const res = await fetch('/submittodoitem', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
     if(res.ok) location.href='/static/success.html'; else alert('Error');
   });
   </script>
