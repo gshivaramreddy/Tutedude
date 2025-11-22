@@ -1,4 +1,1 @@
-[
-  {"id": 1, "title": "Example item", "description": "This list is read from data.json"},
-  {"id": 2, "title": "Another item", "description": "Change or extend this file"}
-]
+{ "properties": [{"id":1,"name":"Updated property A","price":111111}] }
