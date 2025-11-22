@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Submit to MongoDB</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; max-width:720px; margin:40px auto; padding:10px; }
+    label { display:block; margin:12px 0 4px; }
+    input, textarea { width:100%; padding:8px; box-sizing:border-box; }
+    .error { color: #b00020; margin-top:8px; }
+    .btn { margin-top:12px; padding:10px 14px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h2>Data submission form</h2>
+
+  <form id="dataForm" onsubmit="return handleSubmit(event)">
+    <label for="name">Name *</label>
+    <input id="name" name="name" required />
+
+    <label for="email">Email *</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="message">Message</label>
+    <textarea id="message" name="message" rows="4"></textarea>
+
+    <button class="btn" type="submit">Submit</button>
+
+    <div id="error" class="error" role="alert" style="display:none;"></div>
+  </form>
+
+  <hr />
+
+  <h3>Fetch /api (sample)</h3>
+  <button onclick="fetchApi()">Load /api</button>
+  <pre id="apiOutput"></pre>
+
+<script>
+async function handleSubmit(e) {
+  e.preventDefault();
+  const errorEl = document.getElementById('error');
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
+
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    message: document.getElementById('message').value.trim(),
+  };
+
+  try {
+    const resp = await fetch('/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+
+    const data = await resp.json();
+    if (resp.ok && data.success) {
+      window.location.href = '/success';
+    } else {
+      errorEl.style.display = 'block';
+      errorEl.textContent = data.error || 'Submission failed';
+    }
+  } catch (err) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = err.message || 'Network error';
+  }
+  return false;
+}
+
+async function fetchApi() {
+  try {
+    const r = await fetch('/api');
+    const j = await r.json();
+    document.getElementById('apiOutput').textContent = JSON.stringify(j, null, 2);
+  } catch (e) {
+    document.getElementById('apiOutput').textContent = 'Error: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>
